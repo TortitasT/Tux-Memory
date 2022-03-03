@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tux Memory</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        header{
+            margin: auto;
+            margin-top: 15px;
+            width: 500px;
+        }
+        main{
+            margin: auto;
+            width: 500px;
+        }
+        table{
+            margin: auto;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        table td{
+            border: 1px solid black;
+            width: 100px;
+            height: 100px;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tux Memory</h1>
+        <hr>
+    </header>
+    <main>
+        <br>
+        <table id="grid"></table>
+    </main>
+    <script>
+        const tuxes = [
+            'tuxes/tux1.png',
+            'tuxes/tux2.png',
+            'tuxes/tux3.png',
+            'tuxes/tux4.png',
+            'tuxes/tux5.png',
+            'tuxes/tux6.png',
+            'tuxes/tux7.png',
+            'tuxes/tux8.png',
+            'tuxes/tux9.png',
+            'tuxes/tux10.png',
+            'tuxes/tux11.png',
+            'tuxes/tux12.png',
+            'tuxes/tux13.png',
+            'tuxes/tux14.png',
+        ]
+        var used1 = [];
+        var used2 = [];
+        var usedTux = [];
+        var state = 0; //0=normal 1=looking for pair
+        var selected = undefined;
+
+        function CreateInto(tag, parent){
+            temp = document.createElement(tag);
+            parent.appendChild(temp);
+            return temp;
+        }
+        function GenerateGrid(width, height){
+            for(var i=0; i<height; i++){
+                //Generate rows
+                var tr = CreateInto("tr",document.getElementById("grid"));
+
+                //Generate columns
+                for(var i2=0; i2<width; i2++){
+                    var td = CreateInto("td",tr);
+
+                    td.id = `${i2}_${i}`;
+
+                    //OnClick
+                    td.addEventListener("click", function(){
+                        if(event.target.dataset.enabled){
+                            event.target.style.backgroundImage = `url("${event.target.dataset.secret}")`;
+
+                            if(state == 1){
+                                if(selected.dataset.secret != event.target.dataset.secret || selected == event.target){
+                                    event.target.style.backgroundImage = `none`;
+                                    selected.style.backgroundImage = `none`;
+                                    event.target.dataset.enabled = true;
+                                    selected.dataset.enabled = true;
+                                }
+                                else{
+                                    event.target.style.backgroundImage = `url("${event.target.dataset.secret}")`;
+                                    event.target.dataset.enabled = false;
+                                    selected.dataset.enabled = false;
+                                }
+                            }
+
+                            selected = event.target;
+                            if(state == 0){                            
+                                state = 1;
+                            }
+                            else{
+                                state = 0;
+                            }
+                        }
+                    });
+                }
+            }
+            //Generate tuxes
+            for(var i=0; i<(width*height/2); i++){
+                var randomTux = Math.floor(Math.random()*tuxes.length);
+                console.log(usedTux);
+                while(usedTux.includes(parseInt(randomTux))){
+                    randomTux = Math.floor(Math.random()*tuxes.length);
+                }
+                usedTux.push(parseInt(randomTux));
+                console.log(randomTux);
+
+                var random1 = `${Math.floor(Math.random()*width)}_${Math.floor(Math.random()*height)}`;
+                while(used1.includes(random1)){
+                    random1 = `${Math.floor(Math.random()*width)}_${Math.floor(Math.random()*height)}`;
+                }
+                used1.push(random1);
+
+                var random2 = `${Math.floor(Math.random()*width)}_${Math.floor(Math.random()*height)}`;
+                while(used1.includes(random2)){
+                    random2 = `${Math.floor(Math.random()*width)}_${Math.floor(Math.random()*height)}`;
+                }
+                used1.push(random2);
+
+                //Set penguin
+                document.getElementById(random1).dataset.secret = tuxes[randomTux];
+                document.getElementById(random2).dataset.secret = tuxes[randomTux];
+            }
+        }
+
+        width = parseInt(prompt());
+        height = parseInt(prompt());
+        if((width*height)<tuxes.length*2 && (width*height)%2==0){
+            GenerateGrid(width, height);
+        }
+        else{
+            document.writeln("INVALID");
+        }
+    </script>
+</body>
+</html>
