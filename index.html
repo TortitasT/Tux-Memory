@@ -10,23 +10,34 @@
             margin: 0;
             padding: 0;
             font-family: 'Courier New', Courier, monospace;
+
+            color: #F2E9E4;
+        }
+        body{
+            background-color: #22223B;
         }
         header{
             margin: auto;
             margin-top: 15px;
             width: 500px;
+
+            background-color: #4A4E69;
+            padding: 25px;
         }
         main{
             margin: auto;
             width: 500px;
+            
+            background-color: #4A4E69;
+            padding: 25px;
         }
         table{
             margin: auto;
-            border: 1px solid black;
+            border: 2px solid #F2E9E4;
             border-collapse: collapse;
         }
         table td{
-            border: 1px solid black;
+            border: 2px solid #F2E9E4;
             width: 100px;
             height: 100px;
             background-repeat: no-repeat;
@@ -42,6 +53,9 @@
     <main>
         <br>
         <table id="grid"></table>
+        <br>
+        <h1 id="won">You won!</h1>
+        <h2 id="tries"></h2>
     </main>
     <script>
         const tuxes = [
@@ -63,6 +77,8 @@
         var used1 = [];
         var used2 = [];
         var usedTux = [];
+        var found = 0;
+        var tries = 0;
         var state = 0; //0=normal 1=looking for pair
         var selected = undefined;
 
@@ -81,13 +97,16 @@
                     var td = CreateInto("td",tr);
 
                     td.id = `${i2}_${i}`;
+                    
+                    td.dataset.enabled = true;
 
                     //OnClick
                     td.addEventListener("click", function(){
-                        if(event.target.dataset.enabled){
+                        if(event.target.dataset.enabled == "true"){
                             event.target.style.backgroundImage = `url("${event.target.dataset.secret}")`;
 
                             if(state == 1){
+                                tries++;
                                 if(selected.dataset.secret != event.target.dataset.secret || selected == event.target){
                                     event.target.style.backgroundImage = `none`;
                                     selected.style.backgroundImage = `none`;
@@ -98,6 +117,8 @@
                                     event.target.style.backgroundImage = `url("${event.target.dataset.secret}")`;
                                     event.target.dataset.enabled = false;
                                     selected.dataset.enabled = false;
+                                    //Couple found
+                                    found++;
                                 }
                             }
 
@@ -109,8 +130,17 @@
                                 state = 0;
                             }
                         }
+
+                        //Check if won
+                        if(found >= (width*height)/2){
+                            Won();
+                        }
                     });
                 }
+            }
+            function Won(){
+                document.getElementById("won").style.visibility = "visible";
+                document.getElementById("tries").innerHTML = `You tried ${tries} times :D`;
             }
             //Generate tuxes
             for(var i=0; i<(width*height/2); i++){
@@ -140,8 +170,9 @@
             }
         }
 
-        width = parseInt(prompt());
-        height = parseInt(prompt());
+        document.getElementById("won").style.visibility = "hidden";
+        var width = parseInt(prompt());
+        var height = parseInt(prompt());
         if((width*height)<tuxes.length*2 && (width*height)%2==0){
             GenerateGrid(width, height);
         }
