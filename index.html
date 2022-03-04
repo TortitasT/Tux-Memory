@@ -43,6 +43,13 @@
             background-repeat: no-repeat;
             background-size: contain;
         }
+
+        input, button{
+            background-color: #4A4E69;
+            padding: 10px;
+            border: 2px solid #F2E9E4;
+            border-radius: 5em;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +59,12 @@
     </header>
     <main>
         <br>
+        <div id="creator">
+            <label for="width">Table width: </label><input id="width" type="number"><br>
+            <label for="height">Table height: </label><input id="height" type="number"><br>
+            <div id="error"><small>Values not valid</small><br><br></div>
+            <button id="begin">Begin!</button>
+        </div>
         <table id="grid"></table>
         <br>
         <h1 id="won">You won!</h1>
@@ -171,14 +184,17 @@
         }
 
         document.getElementById("won").style.visibility = "hidden";
-        var width = parseInt(prompt());
-        var height = parseInt(prompt());
-        if((width*height)<tuxes.length*2 && (width*height)%2==0){
-            GenerateGrid(width, height);
-        }
-        else{
-            document.writeln("INVALID");
-        }
+        document.getElementById("error").style.display = "none";
+
+        document.getElementById("begin").onclick = function(){
+            if((document.getElementById("width").value*document.getElementById("height").value)<tuxes.length*2 && (document.getElementById("width").value*document.getElementById("height").value)%2==0){
+                document.getElementById("creator").style.display = "none";
+                GenerateGrid(parseInt(document.getElementById("width").value), parseInt(document.getElementById("height").value));
+            }
+            else{
+                document.getElementById("error").style.display = "block";
+            }
+        };
     </script>
 </body>
 </html>
